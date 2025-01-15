@@ -6,6 +6,15 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'admin'], required: true },
+    phone: { type: String }, // Optional for admin
+    address: {
+      street: { type: String },
+      city: { type: String },
+      state: { type: String },
+      zipCode: { type: String },
+    }, // User-specific
+    ordersPlaced: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }], // User-specific
+    isDisabled: { type: Boolean, default: false }, // Admin toggle for disabling accounts
   },
   { timestamps: true }
 );
