@@ -7,10 +7,8 @@ const authenticate = require('../../middlewares/authMiddleware'); // Ensure the 
 
 const router = express.Router();
 
-// Update admin personal details
-router.put('/profile', authenticate, updateProfileDetails);
 
-// Update admin credentials (password)
+router.put('/profile', authenticate, updateProfileDetails);
 router.put('/profile/credentials', authenticate, updateCredentials);
 
 module.exports = router;

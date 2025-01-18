@@ -3,7 +3,7 @@ const {
   getAllUsers,
   updateUserDetails,
   disableUserAccount,
-} = require('../../controllers/admin/userController');
+} = require('../../controllers/admin/adminUserController');
 
 const router = express.Router();
 

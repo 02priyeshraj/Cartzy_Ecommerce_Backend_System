@@ -1,5 +1,10 @@
 const express = require('express');
-const { addCategory, editCategory, deleteCategory, getAllCategories } = require('../../controllers/admin/categoryController');
+const {
+  addCategory,
+  editCategory,
+  deleteCategory,
+  getAllCategories,
+} = require('../../controllers/admin/categoryController');
 const authenticate = require('../../middlewares/authMiddleware'); // Authentication middleware
 
 const router = express.Router();

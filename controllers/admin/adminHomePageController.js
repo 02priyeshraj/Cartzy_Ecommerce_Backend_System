@@ -2,7 +2,7 @@ const HomePage = require('../../models/adminHomePageModel');
 
 // Upload a new banner
 exports.addBanner = async (req, res) => {
-  const { image, link } = req.body;
+  const { name, text, image, backgroundImage, buttonText, buttonLink } = req.body;
 
   try {
     let homePage = await HomePage.findOne();
@@ -11,7 +11,7 @@ exports.addBanner = async (req, res) => {
       homePage = new HomePage();
     }
 
-    homePage.banners.push({ image, link });
+    homePage.banners.push({ name, text, image, backgroundImage, buttonText, buttonLink });
     await homePage.save();
 
     res.status(201).json({ message: 'Banner added successfully', banners: homePage.banners });
@@ -22,7 +22,7 @@ exports.addBanner = async (req, res) => {
 
 // Edit an existing banner
 exports.editBanner = async (req, res) => {
-  const { bannerId, image, link, isActive } = req.body;
+  const { bannerId, name, text, image, backgroundImage, buttonText, buttonLink, isActive } = req.body;
 
   try {
     const homePage = await HomePage.findOne();
@@ -37,8 +37,12 @@ exports.editBanner = async (req, res) => {
       return res.status(404).json({ message: 'Banner not found' });
     }
 
+    if (name !== undefined) banner.name = name;
+    if (text !== undefined) banner.text = text;
     if (image !== undefined) banner.image = image;
-    if (link !== undefined) banner.link = link;
+    if (backgroundImage !== undefined) banner.backgroundImage = backgroundImage;
+    if (buttonText !== undefined) banner.buttonText = buttonText;
+    if (buttonLink !== undefined) banner.buttonLink = buttonLink;
     if (isActive !== undefined) banner.isActive = isActive;
 
     await homePage.save();
@@ -68,6 +72,7 @@ exports.removeBanner = async (req, res) => {
     res.status(500).json({ message: 'Error removing banner', error: error.message });
   }
 };
+
 
 // Add a top category
 exports.addTopCategory = async (req, res) => {
@@ -156,3 +161,34 @@ exports.addBestSellingProducts = async (req, res) => {
     res.status(500).json({ message: 'Error updating best selling products', error: error.message });
   }
 };
+
+// Get all top categories
+exports.getTopCategories = async (req, res) => {
+  try {
+    const homePage = await HomePage.findOne().populate('topCategories.categoryId');
+
+    if (!homePage) {
+      return res.status(404).json({ message: 'Home page not found' });
+    }
+
+    res.status(200).json({ topCategories: homePage.topCategories });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching top categories', error: error.message });
+  }
+};
+
+// Get all best-selling products
+exports.getBestSellingProducts = async (req, res) => {
+  try {
+    const homePage = await HomePage.findOne().populate('bestSellingProducts');
+
+    if (!homePage) {
+      return res.status(404).json({ message: 'Home page not found' });
+    }
+
+    res.status(200).json({ bestSellingProducts: homePage.bestSellingProducts });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching best-selling products', error: error.message });
+  }
+};
+

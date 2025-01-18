@@ -2,10 +2,10 @@ const Category = require('../../models/categoryModel');
 
 // Add a new category
 exports.addCategory = async (req, res) => {
-  const { name, parent } = req.body;
+  const { name, parent, image } = req.body;
 
   try {
-    const category = new Category({ name, parent });
+    const category = new Category({ name, parent, image });
     await category.save();
 
     res.status(201).json({ message: 'Category added successfully', category });
@@ -17,12 +17,12 @@ exports.addCategory = async (req, res) => {
 // Edit an existing category
 exports.editCategory = async (req, res) => {
   const { id } = req.params;
-  const { name, parent } = req.body;
+  const { name, parent, image } = req.body;
 
   try {
     const category = await Category.findByIdAndUpdate(
       id,
-      { name, parent },
+      { name, parent, image },
       { new: true } // Return the updated document
     );
 
