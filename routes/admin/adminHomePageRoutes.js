@@ -7,6 +7,8 @@ const {
   editTopCategory,
   removeTopCategory,
   addBestSellingProducts,
+  getTopCategories, 
+  getBestSellingProducts,  
 } = require('../../controllers/admin/adminHomePageController');
 const authenticate = require('../../middlewares/authMiddleware');
 
@@ -24,5 +26,11 @@ router.delete('/top-category/:categoryId', authenticate, removeTopCategory);
 
 // Best selling products management
 router.post('/best-selling', authenticate, addBestSellingProducts);
+
+// Get all top categories
+router.get('/top-categories', authenticate, getTopCategories);
+
+// Get all best-selling products
+router.get('/best-selling', authenticate, getBestSellingProducts);
 
 module.exports = router;

@@ -8,8 +8,10 @@ const productRoutes = require('./routes/admin/productRoutes');
 const notificationRoutes = require('./routes/admin/notificationRoutes');
 const homePageRoutes = require('./routes/admin/adminHomePageRoutes');
 const orderRoutes = require('./routes/admin/orderRoutes');
-const userRoutes = require('./routes/admin/userRoutes');
+const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const profileRoutes = require('./routes/admin/profileRoutes');
+
+const userRoutes = require('./routes/user/userRoutes');
 
 
 
@@ -25,9 +27,11 @@ app.use('/api/admin/categories', categoryRoutes);
 app.use('/api/admin/products', productRoutes);
 app.use('/api/admin/notifications', notificationRoutes);
 app.use('/api/admin/orders', orderRoutes);
-app.use('/api/admin', userRoutes);
+app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', profileRoutes);
 
+
+app.use('/api/user', userRoutes);
 
 
 

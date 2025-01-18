@@ -5,7 +5,9 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true },
     description: { type: String, required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
-    price: { type: Number, required: true },
+    MRP: { type: Number, required: true }, // New field for MRP
+    discountedPrice: { type: Number }, // New field for discounted price
+    price: { type: Number, required: true }, // Selling price
     stock: { type: Number, default: 0 },
     images: [{ type: String, required: true }],
     discount: {
@@ -18,7 +20,7 @@ const productSchema = new mongoose.Schema(
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         rating: { type: Number, min: 1, max: 5, required: true },
-        review: { type: String }, // Optional review text
+        review: { type: String },
       },
     ],
   },

@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 
 const bannerSchema = new mongoose.Schema({
-  image: { type: String, required: true }, // URL or file path
-  link: { type: String }, // Optional link for the banner
+  name: { type: String, required: true },
+  text: { type: String },
+  image: { type: String, required: true },
+  backgroundImage: { type: String },  // New field for background image
+  buttonText: { type: String },
+  buttonLink: { type: String },
   isActive: { type: Boolean, default: true },
 });
 
