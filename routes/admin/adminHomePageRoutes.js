@@ -3,6 +3,7 @@ const {
   addBanner,
   editBanner,
   removeBanner,
+  getActiveBanners,
   addTopCategory,
   editTopCategory,
   removeTopCategory,
@@ -18,6 +19,8 @@ const router = express.Router();
 router.post('/banner', authenticate, addBanner);
 router.put('/banner', authenticate, editBanner);
 router.delete('/banner/:bannerId', authenticate, removeBanner);
+router.get('/banners/active', authenticate, getActiveBanners);
+
 
 // Top categories management
 router.post('/top-category', authenticate, addTopCategory);
