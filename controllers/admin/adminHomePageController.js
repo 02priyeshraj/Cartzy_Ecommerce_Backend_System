@@ -73,6 +73,24 @@ exports.removeBanner = async (req, res) => {
   }
 };
 
+// Get all active banners
+exports.getActiveBanners = async (req, res) => {
+  try {
+    const homePage = await HomePage.findOne();
+
+    if (!homePage || homePage.banners.length === 0) {
+      return res.status(404).json({ message: 'No banners found' });
+    }
+
+    const activeBanners = homePage.banners.filter(banner => banner.isActive);
+
+    res.status(200).json({ message: 'Active banners fetched successfully', banners: activeBanners });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching active banners', error: error.message });
+  }
+};
+
+
 
 // Add a top category
 exports.addTopCategory = async (req, res) => {

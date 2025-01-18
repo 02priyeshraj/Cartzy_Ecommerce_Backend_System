@@ -4,7 +4,7 @@ const bannerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   text: { type: String },
   image: { type: String, required: true },
-  backgroundImage: { type: String },  // New field for background image
+  backgroundImage: { type: String }, 
   buttonText: { type: String },
   buttonLink: { type: String },
   isActive: { type: Boolean, default: true },
