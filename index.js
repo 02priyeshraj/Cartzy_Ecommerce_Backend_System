@@ -7,14 +7,15 @@ const adminAuthRoutes = require('./routes/admin/authRoutes');
 const categoryRoutes = require('./routes/admin/categoryRoutes');
 const productRoutes = require('./routes/admin/productRoutes');
 const notificationRoutes = require('./routes/admin/notificationRoutes');
-const homePageRoutes = require('./routes/admin/adminHomePageRoutes');
+const homePageRoutes = require('./routes/admin/homePageRoutes');
 const orderRoutes = require('./routes/admin/orderRoutes');
 const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const profileRoutes = require('./routes/admin/profileRoutes');
 
 //Importing User Routes
 const userRoutes = require('./routes/user/userRoutes');
-const userHomePageRoutes = require('./routes/user/userHomePageRoutes');
+const userHomePageRoutes = require('./routes/user/homePageRoutes');
+const userProductRoutes = require('./routes/user/productRoutes');
 
 // Initialize Express
 const app = express();
@@ -35,6 +36,7 @@ app.use('/api/admin', profileRoutes);
 //User Routes
 app.use('/api/user', userRoutes);
 app.use('/api/user/home-page', userHomePageRoutes);
+app.use('/api/user/products', userProductRoutes);
 
 
 // Connect to Database

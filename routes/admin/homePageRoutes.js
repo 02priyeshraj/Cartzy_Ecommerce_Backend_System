@@ -10,7 +10,7 @@ const {
   addBestSellingProducts,
   getTopCategories, 
   getBestSellingProducts,  
-} = require('../../controllers/admin/adminHomePageController');
+} = require('../../controllers/admin/homePageController');
 const authenticate = require('../../middlewares/authMiddleware');
 
 const router = express.Router();

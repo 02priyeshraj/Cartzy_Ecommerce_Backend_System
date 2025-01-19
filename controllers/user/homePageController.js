@@ -1,4 +1,4 @@
-const HomePage = require('../../models/adminHomePageModel');
+const HomePage = require('../../models/homePageModel');
 
 // 1. Fetch all active banners
 exports.getActiveBanners = async (req, res, next) => {
