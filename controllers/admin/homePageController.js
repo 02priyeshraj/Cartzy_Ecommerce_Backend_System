@@ -1,4 +1,4 @@
-const HomePage = require('../../models/adminHomePageModel');
+const HomePage = require('../../models/homePageModel');
 
 // Upload a new banner
 exports.addBanner = async (req, res) => {

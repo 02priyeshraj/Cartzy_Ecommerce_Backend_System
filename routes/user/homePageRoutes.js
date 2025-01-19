@@ -3,7 +3,7 @@ const {
   getActiveBanners,
   getActiveCategories,
   getBestSellingProducts,
-} = require('../../controllers/user/userHomePageController');
+} = require('../../controllers/user/homePageController');
 
 const router = express.Router();
 

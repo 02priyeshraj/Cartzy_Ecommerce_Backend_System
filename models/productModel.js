@@ -23,6 +23,7 @@ const productSchema = new mongoose.Schema(
         review: { type: String },
       },
     ],
+    keywords: { type: [String], default: [] }, // for better searchability
   },
   { timestamps: true }
 );
