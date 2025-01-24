@@ -24,10 +24,10 @@ const app = express();
 app.use(express.json());
 
 // Admin Routes
-app.use('/api/admin/home-page', homePageRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
-app.use('/api/admin/categories', categoryRoutes);
+app.use('/api/admin/category', categoryRoutes);
 app.use('/api/admin/products', productRoutes);
+app.use('/api/admin/home-page', homePageRoutes);
 app.use('/api/admin/notifications', notificationRoutes);
 app.use('/api/admin/orders', orderRoutes);
 app.use('/api/admin', adminUserRoutes);
