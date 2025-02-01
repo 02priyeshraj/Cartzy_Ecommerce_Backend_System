@@ -16,6 +16,10 @@ const profileRoutes = require('./routes/admin/profileRoutes');
 const userRoutes = require('./routes/user/userRoutes');
 const userHomePageRoutes = require('./routes/user/homePageRoutes');
 const userProductRoutes = require('./routes/user/productRoutes');
+const wishlistRoutes = require('./routes/user/wishlistRoutes');
+const cartRoutes = require('./routes/user/cartRoutes');
+
+
 
 // Initialize Express
 const app = express();
@@ -37,6 +41,9 @@ app.use('/api/admin', profileRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/user/home-page', userHomePageRoutes);
 app.use('/api/user/products', userProductRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/cart', cartRoutes);
+
 
 
 // Connect to Database
