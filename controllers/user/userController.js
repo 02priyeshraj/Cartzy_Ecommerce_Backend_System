@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// Add/Edit Personal Details
+//  Update Personal Details
 exports.updatePersonalDetails = async (req, res) => {
   const { name, phone } = req.body;
 
@@ -68,27 +68,67 @@ exports.updatePersonalDetails = async (req, res) => {
   }
 };
 
-// Add/Edit/Remove Addresses
-exports.manageAddress = async (req, res) => {
-  const { street, city, state, zipCode } = req.body;
+// Add a New Address
+exports.addAddress = async (req, res) => {
+  const { street, city, state, zipCode, country } = req.body;
 
   try {
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { address: { street, city, state, zipCode } },
-      { new: true }
-    );
-
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({
-      message: 'Address updated successfully',
-      address: user.address,
-    });
+    const newAddress = { street, city, state, zipCode, country };
+    user.addresses.push(newAddress);
+    await user.save();
+
+    res.status(201).json({ message: 'Address added successfully', addresses: user.addresses });
   } catch (error) {
-    res.status(500).json({ message: 'Error managing address', error: error.message });
+    res.status(500).json({ message: 'Error adding address', error: error.message });
+  }
+};
+
+// Edit an Existing Address
+exports.editAddress = async (req, res) => {
+  const { addressId } = req.params;
+  const { street, city, state, zipCode, country } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const addressIndex = user.addresses.findIndex(addr => addr._id.toString() === addressId);
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+
+    user.addresses[addressIndex] = { _id: addressId, street, city, state, zipCode, country };
+    await user.save();
+
+    res.status(200).json({ message: 'Address updated successfully', addresses: user.addresses });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating address', error: error.message });
+  }
+};
+
+// Remove an Address
+exports.removeAddress = async (req, res) => {
+  const { addressId } = req.params;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.addresses = user.addresses.filter(addr => addr._id.toString() !== addressId);
+    await user.save();
+
+    res.status(200).json({ message: 'Address removed successfully', addresses: user.addresses });
+  } catch (error) {
+    res.status(500).json({ message: 'Error removing address', error: error.message });
   }
 };
 
@@ -122,5 +162,3 @@ exports.changePassword = async (req, res) => {
 exports.logout = (req, res) => {
   res.status(200).json({ message: 'Logout successful' });
 };
-
-

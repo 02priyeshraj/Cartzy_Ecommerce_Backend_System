@@ -8,7 +8,7 @@ const categoryRoutes = require('./routes/admin/categoryRoutes');
 const productRoutes = require('./routes/admin/productRoutes');
 const notificationRoutes = require('./routes/admin/notificationRoutes');
 const homePageRoutes = require('./routes/admin/homePageRoutes');
-const orderRoutes = require('./routes/admin/orderRoutes');
+const adminOrderRoutes = require('./routes/admin/orderRoutes');
 const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const profileRoutes = require('./routes/admin/profileRoutes');
 
@@ -18,6 +18,9 @@ const userHomePageRoutes = require('./routes/user/homePageRoutes');
 const userProductRoutes = require('./routes/user/productRoutes');
 const wishlistRoutes = require('./routes/user/wishlistRoutes');
 const cartRoutes = require('./routes/user/cartRoutes');
+const userOrderRoutes = require('./routes/user/orderRoutes');
+
+
 
 
 
@@ -33,7 +36,7 @@ app.use('/api/admin/category', categoryRoutes);
 app.use('/api/admin/products', productRoutes);
 app.use('/api/admin/home-page', homePageRoutes);
 app.use('/api/admin/notifications', notificationRoutes);
-app.use('/api/admin/orders', orderRoutes);
+app.use('/api/admin/orders', adminOrderRoutes);
 app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', profileRoutes);
 
@@ -41,8 +44,10 @@ app.use('/api/admin', profileRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/user/home-page', userHomePageRoutes);
 app.use('/api/user/products', userProductRoutes);
-app.use('/api/wishlist', wishlistRoutes);
-app.use('/api/cart', cartRoutes);
+app.use('/api/user/wishlist', wishlistRoutes);
+app.use('/api/user/cart', cartRoutes);
+app.use('/api/user/orders', userOrderRoutes);
+
 
 
 
