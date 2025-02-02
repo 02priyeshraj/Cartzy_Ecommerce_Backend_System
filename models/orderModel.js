@@ -28,6 +28,13 @@ const orderSchema = new mongoose.Schema(
       enum: ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'],
       default: 'Pending',
     },
+    trackingDetails: {
+      estimatedDelivery: { type: Date },
+      processingDate: { type: Date },
+      shippedDate: { type: Date },
+      outForDeliveryDate: { type: Date },
+      deliveredDate: { type: Date },
+    },
     paymentStatus: { type: String, enum: ['Paid', 'Unpaid'], default: 'Unpaid' },
     orderDate: { type: Date, default: Date.now },
   },
