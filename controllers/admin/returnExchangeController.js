@@ -1,6 +1,4 @@
 const ReturnExchange = require('../../models/returnExchangeModel');
-const Order = require('../../models/orderModel');
-const Product = require('../../models/productModel');
 
 // Admin Approves or Rejects Return/Exchange Request
 exports.processRequest = async (req, res) => {
@@ -40,5 +38,25 @@ exports.processRequest = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Error processing request', error: error.message });
     }
-  };
-  
+};
+
+// Admin View History of Processed Refunds and Exchanges
+exports.getProcessedRequests = async (req, res) => {
+    try {
+        const processedRequests = await ReturnExchange.find({
+            status: { $in: ['Approved', 'Rejected', 'Completed'] },
+        })
+        .populate('userId orderId productId exchangeProductId')
+        .sort({ resolvedDate: -1 });
+
+        res.status(200).json({
+            message: 'Processed requests retrieved successfully',
+            processedRequests,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error fetching processed requests',
+            error: error.message,
+        });
+    }
+};
