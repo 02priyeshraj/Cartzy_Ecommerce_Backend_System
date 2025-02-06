@@ -12,6 +12,8 @@ const adminOrderRoutes = require('./routes/admin/orderRoutes');
 const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const profileRoutes = require('./routes/admin/profileRoutes');
 const adminReturnExchangeRoutes = require('./routes/admin/returnExchangeRoutes');
+const userManagementRoutes = require('./routes/admin/userManageRoutes');
+
 
 //Importing User Routes
 const userRoutes = require('./routes/user/userRoutes');
@@ -43,6 +45,7 @@ app.use('/api/admin/orders', adminOrderRoutes);
 app.use('/api/admin', adminUserRoutes);
 app.use('/api/admin', profileRoutes);
 app.use('/api/admin/return-exchange', adminReturnExchangeRoutes);
+app.use('/api/admin/user-management', userManagementRoutes);
 
 //User Routes
 app.use('/api/user', userRoutes);
