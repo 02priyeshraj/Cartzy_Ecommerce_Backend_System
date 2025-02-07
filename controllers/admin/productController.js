@@ -1,16 +1,19 @@
 const Product = require('../../models/productModel');
+const { uploadToS3 } = require('../../helpers/awsUpload');
 
-// Calculate discounted price
 const calculateDiscountedPrice = (MRP, discountPercentage) => {
   return MRP - (MRP * discountPercentage) / 100;
 };
 
-
-// Add a new product
 exports.addProduct = async (req, res) => {
-  const { name, description, category, MRP, price, stock, images, specifications, discount } = req.body;
-
   try {
+    const { name, description, category, MRP, price, stock, specifications, discount } = req.body;
+
+    let imageUrls = [];
+    if (req.files) {
+      imageUrls = await Promise.all(req.files.map(file => uploadToS3(file, "product-images")));
+    }
+
     const discountedPrice = discount ? calculateDiscountedPrice(MRP, discount.percentage) : MRP;
 
     const product = new Product({
@@ -20,32 +23,34 @@ exports.addProduct = async (req, res) => {
       MRP,
       price,
       stock,
-      images,
+      images: imageUrls,
       specifications,
       discount,
       discountedPrice,
     });
-    await product.save();
 
+    await product.save();
     res.status(201).json({ message: 'Product added successfully', product });
   } catch (error) {
     res.status(500).json({ message: 'Error adding product', error: error.message });
   }
 };
 
-// Edit a product
 exports.editProduct = async (req, res) => {
-  const { id } = req.params;
-  const { name, description, category, MRP, price, stock, images, specifications, discount } = req.body;
-
   try {
-    const discountedPrice = discount ? calculateDiscountedPrice(MRP, discount.percentage) : MRP;
+    const { id } = req.params;
+    const { name, description, category, MRP, price, stock, specifications, discount } = req.body;
 
-    const product = await Product.findByIdAndUpdate(
-      id,
-      { name, description, category, MRP, price, stock, images, specifications, discount, discountedPrice },
-      { new: true }
-    );
+    let updateData = { name, description, category, MRP, price, stock, specifications, discount };
+
+    if (req.files) {
+      updateData.images = await Promise.all(req.files.map(file => uploadToS3(file, "product-images")));
+    }
+
+    const discountedPrice = discount ? calculateDiscountedPrice(MRP, discount.percentage) : MRP;
+    updateData.discountedPrice = discountedPrice;
+
+    const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -56,6 +61,7 @@ exports.editProduct = async (req, res) => {
     res.status(500).json({ message: 'Error updating product', error: error.message });
   }
 };
+
 
 // Delete a product
 exports.deleteProduct = async (req, res) => {
