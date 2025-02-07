@@ -4,7 +4,7 @@ const categorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
-    image: { type: String, default: null }, // Optional field for category image
+    image: { type: String, default: null },
   },
   { timestamps: true }
 );
