@@ -1,17 +1,22 @@
 const HomePage = require('../../models/homePageModel');
+const { uploadToS3 } = require('../../helpers/awsUpload');
 
 // Upload a new banner
 exports.addBanner = async (req, res) => {
-  const { name, text, image, backgroundImage, buttonText, buttonLink } = req.body;
-
+  const { name, text, backgroundImage, buttonText, buttonLink } = req.body;
+  
   try {
-    let homePage = await HomePage.findOne();
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = await uploadToS3(req.file, 'banners');
+    }
 
+    let homePage = await HomePage.findOne();
     if (!homePage) {
       homePage = new HomePage();
     }
 
-    homePage.banners.push({ name, text, image, backgroundImage, buttonText, buttonLink });
+    homePage.banners.push({ name, text, image: imageUrl, backgroundImage, buttonText, buttonLink });
     await homePage.save();
 
     res.status(201).json({ message: 'Banner added successfully', banners: homePage.banners });
@@ -22,31 +27,32 @@ exports.addBanner = async (req, res) => {
 
 // Edit an existing banner
 exports.editBanner = async (req, res) => {
-  const { bannerId, name, text, image, backgroundImage, buttonText, buttonLink, isActive } = req.body;
+  const { bannerId, name, text, backgroundImage, buttonText, buttonLink, isActive } = req.body;
 
   try {
     const homePage = await HomePage.findOne();
-
     if (!homePage) {
       return res.status(404).json({ message: 'Home page not found' });
     }
 
     const banner = homePage.banners.id(bannerId);
-
     if (!banner) {
       return res.status(404).json({ message: 'Banner not found' });
     }
 
     if (name !== undefined) banner.name = name;
     if (text !== undefined) banner.text = text;
-    if (image !== undefined) banner.image = image;
     if (backgroundImage !== undefined) banner.backgroundImage = backgroundImage;
     if (buttonText !== undefined) banner.buttonText = buttonText;
     if (buttonLink !== undefined) banner.buttonLink = buttonLink;
     if (isActive !== undefined) banner.isActive = isActive;
 
-    await homePage.save();
+    // Upload new image if provided
+    if (req.file) {
+      banner.image = await uploadToS3(req.file, 'banners');
+    }
 
+    await homePage.save();
     res.status(200).json({ message: 'Banner updated successfully', banners: homePage.banners });
   } catch (error) {
     res.status(500).json({ message: 'Error updating banner', error: error.message });
