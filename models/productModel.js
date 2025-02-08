@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
       validTill: { type: Date },
     },
     isActive: { type: Boolean, default: true },
-    specifications: { type: Map, of: String },
+    specifications: { type: Map, of: String , default: new Map() },
     ratings: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

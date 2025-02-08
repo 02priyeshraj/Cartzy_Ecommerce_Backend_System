@@ -27,8 +27,6 @@ const userReturnExchangeRoutes = require('./routes/user/returnExchangeRoutes');
 const userNotificationRoutes = require('./routes/user/notificationRoutes');
 
 
-
-
 // Initialize Express
 const app = express();
 

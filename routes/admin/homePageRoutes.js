@@ -14,10 +14,14 @@ const {
 const authenticate = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // Banner management
-router.post('/banner', authenticate, addBanner);
-router.put('/banner', authenticate, editBanner);
+router.post('/banner', authenticate, upload.single('image'), addBanner);
+router.put('/banner', authenticate, upload.single('image'), editBanner);
 router.delete('/banner/:bannerId', authenticate, removeBanner);
 router.get('/banners/active', authenticate, getActiveBanners);
 
