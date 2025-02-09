@@ -3,12 +3,17 @@ const { uploadToS3 } = require('../../helpers/awsUpload');
 
 // Upload a new banner
 exports.addBanner = async (req, res) => {
-  const { name, text, backgroundImage, buttonText, buttonLink } = req.body;
+  const { name, text, buttonText, buttonLink } = req.body;
   
   try {
     let imageUrl = null;
-    if (req.file) {
-      imageUrl = await uploadToS3(req.file, 'banners');
+    let backgroundImageUrl = null;
+
+    if (req.files && req.files.image) {
+      imageUrl = await uploadToS3(req.files.image[0], 'banners');
+    }
+    if (req.files && req.files.backgroundImage) {
+      backgroundImageUrl = await uploadToS3(req.files.backgroundImage[0], 'banners/backgrounds');
     }
 
     let homePage = await HomePage.findOne();
@@ -16,7 +21,7 @@ exports.addBanner = async (req, res) => {
       homePage = new HomePage();
     }
 
-    homePage.banners.push({ name, text, image: imageUrl, backgroundImage, buttonText, buttonLink });
+    homePage.banners.push({ name, text, image: imageUrl, backgroundImage: backgroundImageUrl, buttonText, buttonLink });
     await homePage.save();
 
     res.status(201).json({ message: 'Banner added successfully', banners: homePage.banners });
@@ -27,7 +32,7 @@ exports.addBanner = async (req, res) => {
 
 // Edit an existing banner
 exports.editBanner = async (req, res) => {
-  const { bannerId, name, text, backgroundImage, buttonText, buttonLink, isActive } = req.body;
+  const { bannerId, name, text, buttonText, buttonLink, isActive } = req.body;
 
   try {
     const homePage = await HomePage.findOne();
@@ -42,14 +47,16 @@ exports.editBanner = async (req, res) => {
 
     if (name !== undefined) banner.name = name;
     if (text !== undefined) banner.text = text;
-    if (backgroundImage !== undefined) banner.backgroundImage = backgroundImage;
     if (buttonText !== undefined) banner.buttonText = buttonText;
     if (buttonLink !== undefined) banner.buttonLink = buttonLink;
     if (isActive !== undefined) banner.isActive = isActive;
 
-    // Upload new image if provided
-    if (req.file) {
-      banner.image = await uploadToS3(req.file, 'banners');
+    // Upload new images if provided
+    if (req.files && req.files.image) {
+      banner.image = await uploadToS3(req.files.image[0], 'banners');
+    }
+    if (req.files && req.files.backgroundImage) {
+      banner.backgroundImage = await uploadToS3(req.files.backgroundImage[0], 'banners/backgrounds');
     }
 
     await homePage.save();
@@ -183,6 +190,25 @@ exports.addBestSellingProducts = async (req, res) => {
     res.status(201).json({ message: 'Best selling products updated successfully', bestSellingProducts: homePage.bestSellingProducts });
   } catch (error) {
     res.status(500).json({ message: 'Error updating best selling products', error: error.message });
+  }
+};
+
+exports.removeBestSellingProduct = async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    const homePage = await HomePage.findOne();
+
+    if (!homePage) {
+      return res.status(404).json({ message: 'Home page not found' });
+    }
+
+    homePage.bestSellingProducts = homePage.bestSellingProducts.filter(product => product._id.toString() !== productId);
+    await homePage.save();
+
+    res.status(200).json({ message: 'Best selling product removed successfully', bestSellingProducts: homePage.bestSellingProducts });
+  } catch (error) {
+    res.status(500).json({ message: 'Error removing best selling product', error: error.message });
   }
 };
 

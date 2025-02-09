@@ -4,7 +4,7 @@ const Product = require('../../models/productModel');
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({ isActive: true }).populate('category', 'name');
-    res.status(200).json(products);
+    res.status(200).json({message: 'Products fetched successfully.', products : products});
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch products', error });
   }
@@ -16,7 +16,7 @@ const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(id).populate('category', 'name');
     if (!product) return res.status(404).json({ message: 'Product not found' });
-    res.status(200).json(product);
+    res.status(200).json({message: 'Product fetched successfully.', product : product});
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch product', error });
   }
@@ -27,7 +27,7 @@ const getProductByName = async (req, res) => {
   const { name } = req.params;
   try {
     const products = await Product.find({ name: new RegExp(name, 'i'), isActive: true });
-    res.status(200).json(products);
+    res.status(200).json({message: 'Products fetched successfully.', products : products});
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch product', error });
   }
@@ -45,7 +45,7 @@ const getProductsByKeywords = async (req, res) => {
       ],
       isActive: true,
     });
-    res.status(200).json(products);
+    res.status(200).json({message: 'Products fetched successfully.', products : products});
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch products', error });
   }
@@ -56,7 +56,7 @@ const getProductsByCategory = async (req, res) => {
   const { categoryId } = req.params;
   try {
     const products = await Product.find({ category: categoryId, isActive: true });
-    res.status(200).json(products);
+    res.status(200).json({message: 'Products fetched successfully.', products : products});
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch products', error });
   }
@@ -71,7 +71,7 @@ const filterProducts = async (req, res) => {
     if (filters.brand) query['specifications.brand'] = new RegExp(filters.brand, 'i');
 
     const products = await Product.find(query);
-    res.status(200).json(products);
+    res.status(200).json({message: 'Products fetched successfully.', products : products});
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch products', error });
   }
