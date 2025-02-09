@@ -3,18 +3,30 @@ const User = require('../../models/userModel');
 const Cart = require('../../models/cartModel');
 const Product = require('../../models/productModel');
 
-// 1. Place an Order
 exports.placeOrder = async (req, res) => {
   try {
     const { addressId, paymentMethod } = req.body;
+    
+    // Ensure user exists
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Ensure cart exists and is not empty
     const cart = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
-    if (!cart || cart.items.length === 0) return res.status(400).json({ message: "Cart is empty" });
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: "Cart is empty" });
+    }
 
+    // Ensure address exists
     const address = user.addresses.find(addr => addr._id.toString() === addressId);
-    if (!address) return res.status(400).json({ message: "Invalid address" });
+    if (!address) {
+      return res.status(400).json({ message: "Invalid or missing address" });
+    }
+
+    // Validate if address has all required fields
+    if (!address.name || !address.address || !address.phone) {
+      return res.status(400).json({ message: "Address is missing required fields" });
+    }
 
     // Prepare order items
     const orderItems = cart.items.map(item => ({
@@ -23,25 +35,33 @@ exports.placeOrder = async (req, res) => {
       price: item.price,
     }));
 
+    // Create new order
     const newOrder = new Order({
       userId: req.user.id,
       items: orderItems,
       totalAmount: cart.totalPrice,
-      shippingAddress: address,
+      shippingAddress: { ...address._doc }, // Ensure a complete address object is passed
       paymentStatus: paymentMethod === "COD" ? "Unpaid" : "Paid",
     });
 
     await newOrder.save();
+
+    // Link order to user
     user.ordersPlaced.push(newOrder._id);
     await user.save();
 
+    // Clear the cart
     await Cart.findOneAndDelete({ userId: req.user.id });
 
     res.status(201).json({ message: "Order placed successfully", order: newOrder });
   } catch (error) {
+    console.error("Error placing order:", error);
     res.status(500).json({ error: 'Error placing order' });
   }
 };
+
+
+
 
 // 2. Get All Orders for User
 exports.getUserOrders = async (req, res) => {

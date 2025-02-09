@@ -57,32 +57,50 @@ exports.removeFromWishlist = async (req, res) => {
 exports.moveToCart = async (req, res) => {
   try {
     const { productId } = req.params;
+
+    // Fetch the product and check if it exists
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Fetch user's wishlist
     const wishlist = await Wishlist.findOne({ userId: req.user.id });
     if (!wishlist) return res.status(404).json({ message: "Wishlist not found" });
 
-    // Remove from Wishlist
+    // Find item in wishlist
     const itemIndex = wishlist.items.findIndex(item => item.productId.toString() === productId);
     if (itemIndex === -1) return res.status(400).json({ message: "Item not found in wishlist" });
 
+    // Remove from Wishlist
     wishlist.items.splice(itemIndex, 1);
     await wishlist.save();
 
-    // Add to Cart
+    // Fetch user's cart
     let cart = await Cart.findOne({ userId: req.user.id });
+
     if (!cart) {
-      cart = new Cart({ userId: req.user.id, items: [{ productId, quantity: 1 }] });
+      cart = new Cart({
+        userId: req.user.id,
+        items: [{ productId, quantity: 1, price: product.price }],
+      });
     } else {
+      if (!cart.items) cart.items = []; // Ensure items array exists
       const cartItem = cart.items.find(item => item.productId.toString() === productId);
       if (cartItem) {
         cartItem.quantity += 1;
       } else {
-        cart.items.push({ productId, quantity: 1 });
+        cart.items.push({ productId, quantity: 1, price: product.price });
       }
     }
+
+    // Recalculate totalPrice
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
     await cart.save();
 
     res.status(200).json({ message: "Item moved to cart", wishlist, cart });
+
   } catch (error) {
-    res.status(500).json({ error: 'Error moving item to cart' });
+    console.error("Error moving item to cart:", error);
+    res.status(500).json({ error: 'Error moving item to cart', details: error.message });
   }
 };

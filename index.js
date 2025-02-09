@@ -52,7 +52,7 @@ app.use('/api/user/products', userProductRoutes);
 app.use('/api/user/wishlist', wishlistRoutes);
 app.use('/api/user/cart', cartRoutes);
 app.use('/api/user/orders', userOrderRoutes);
-app.use('/api/user/tracking/', trackingRoutes);
+app.use('/api/user/tracking', trackingRoutes);
 app.use('/api/user/return-exchange', userReturnExchangeRoutes);
 app.use('/api/user/notifications', userNotificationRoutes);
 

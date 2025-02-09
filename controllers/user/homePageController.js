@@ -31,10 +31,17 @@ exports.getActiveCategories = async (req, res, next) => {
 // 3. Fetch best-selling products
 exports.getBestSellingProducts = async (req, res, next) => {
   try {
-    const homePage = await HomePage.findOne({}).populate('bestSellingProducts', 'name image price rating');
+    const homePage = await HomePage.findOne({})
+      .populate({
+        path: 'bestSellingProducts',
+        model: 'Product',
+        select: '-__v', // Exclude MongoDB version key
+      });
+
     if (!homePage) {
       return res.status(404).json({ message: 'Home Page not found.' });
     }
+
     res.status(200).json({
       message: 'Best-selling products fetched successfully.',
       products: homePage.bestSellingProducts,

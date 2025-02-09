@@ -98,14 +98,34 @@ exports.checkout = async (req, res) => {
 // 6. Get Product Recommendations
 exports.getRecommendations = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.user.id });
-    if (!cart || cart.items.length === 0) return res.status(200).json({ message: "No recommendations" });
+    const cart = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
 
-    const categoryIds = cart.items.map(item => item.productId.category);
-    const recommendedProducts = await Product.find({ category: { $in: categoryIds }, isActive: true }).limit(5);
+    if (!cart || cart.items.length === 0) {
+      return res.status(200).json({ message: "No recommendations", recommendations: [] });
+    }
+
+    // Extract category IDs from cart items
+    const categoryIds = cart.items
+      .map(item => item.productId?.category)
+      .filter(category => category); // Remove undefined values
+
+    console.log("Fetching recommendations for categories:", categoryIds);
+
+    if (categoryIds.length === 0) {
+      return res.status(200).json({ message: "No recommendations", recommendations: [] });
+    }
+
+    // Find products in those categories excluding the ones already in cart
+    const recommendedProducts = await Product.find({
+      category: { $in: categoryIds },
+      isActive: true,
+      _id: { $nin: cart.items.map(item => item.productId._id) } // Exclude already added products
+    }).limit(5);
 
     res.status(200).json({ recommendations: recommendedProducts });
   } catch (error) {
+    console.error("Error fetching recommendations:", error);
     res.status(500).json({ error: 'Error fetching recommendations' });
   }
 };
+
