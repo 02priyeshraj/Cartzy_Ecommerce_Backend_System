@@ -28,6 +28,22 @@ exports.getActiveCategories = async (req, res, next) => {
   }
 };
 
+exports.getTopCategories = async (req, res) => {
+  try {
+    const homePage = await HomePage.findOne().populate('topCategories.categoryId');
+
+    if (!homePage) {
+      return res.status(404).json({ message: 'Home page not found' });
+    }
+
+    res.status(200).json({ topCategories: homePage.topCategories });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching top categories', error: error.message });
+  }
+};
+
+
+
 // 3. Fetch best-selling products
 exports.getBestSellingProducts = async (req, res, next) => {
   try {
