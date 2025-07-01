@@ -125,7 +125,7 @@ By default, the server will run at: `http://localhost:5000`
 
 Test endpoints using the Postman collection provided here:
 
-📦 **[Download Postman Collection](docs/Cartzy_Ecommerce.postman_collection.json)**
+📦 **[Download Postman Collection](docs\Ecommerce_Nodejs.postman_collection.json)**
 
 > Import the collection into Postman and set your environment variables for JWT tokens, etc.
 
